@@ -14,4 +14,4 @@ connection()
   )
   .catch((err) => console.log("connection failed", err));
 
-  export default connection;
+export default app
