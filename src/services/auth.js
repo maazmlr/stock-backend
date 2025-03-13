@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../schema/user.js"; // Ensure correct path
 import { ApiError } from "../utils/error.js"; // Import ApiError
 import crypto from "crypto";
-import sendEmail  from "../utils/sendEmail.js";
+import sendEmail from "../utils/sendEmail.js";
 
 // Config
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_here";
@@ -122,5 +122,14 @@ export const authService = {
     await user.save();
 
     return { message: "Password reset successful" };
+  },
+
+  async getAllRealUsers() {
+    try {
+      const users = await User.find({ role: "Real" }).select("-password"); // Exclude passwords
+      return { users };
+    } catch (error) {
+      throw new ApiError(500, error.message || "Failed to fetch users");
+    }
   },
 };

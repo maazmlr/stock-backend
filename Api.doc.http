@@ -9,7 +9,7 @@ Content-Type: application/json
   "city": "New York",
   "country": "USA",
   "contactNo": "1234567890",
-  "role": "Demo"
+  "role": "Real"
 }
 
 ### Login User
@@ -38,3 +38,6 @@ Content-Type: application/json
 {
   "newPassword": "newsecurepassword123"
 }
+
+###
+GET http://localhost:8000/api/v1/auth/real-users

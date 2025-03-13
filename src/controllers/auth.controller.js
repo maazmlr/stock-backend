@@ -36,7 +36,7 @@ const LoginUser = asyncHandler(async (req, res) => {
   }
 });
 
- const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
   try {
     const result = await authService.login(req.body);
     const response = new ApiResponsone(200, result, "User login successful");
@@ -52,7 +52,7 @@ const LoginUser = asyncHandler(async (req, res) => {
 });
 
 // 📌 FORGOT PASSWORD
- const forgotPassword = asyncHandler(async (req, res) => {
+const forgotPassword = asyncHandler(async (req, res) => {
   try {
     const result = await authService.forgotPassword(req.body.email);
     const response = new ApiResponsone(
@@ -72,7 +72,7 @@ const LoginUser = asyncHandler(async (req, res) => {
 });
 
 // 📌 RESET PASSWORD
- const resetPassword = asyncHandler(async (req, res) => {
+const resetPassword = asyncHandler(async (req, res) => {
   try {
     const result = await authService.resetPassword(
       req.params.token,
@@ -94,4 +94,29 @@ const LoginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { RegisterUser, LoginUser, forgotPassword, resetPassword };
+const getAllRealUsers = asyncHandler(async (req, res) => {
+  try {
+    const result = await authService.getAllRealUsers();
+    const response = new ApiResponsone(
+      200,
+      result,
+      "Fetched users successfully"
+    );
+    return res.status(response.statusCode).json(response);
+  } catch (error) {
+    const response = new ApiResponsone(
+      400,
+      null,
+      error.message || "Failed to fetch users"
+    );
+    return res.status(response.statusCode).json(response);
+  }
+});
+
+export {
+  RegisterUser,
+  LoginUser,
+  forgotPassword,
+  resetPassword,
+  getAllRealUsers,
+};
