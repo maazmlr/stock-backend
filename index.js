@@ -1,4 +1,4 @@
-import connection from "./src/db/index.js";
+import connection from "./db/index.js";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
@@ -15,12 +15,11 @@ app.use(express.static("public"));
 
 //routes
 
-import userRouter from "./src/routes/user.routes.js";
+import userRouter from "./routes/user.routes.js";
 
 // routes declerationOrd
 
 app.use("/api/v1/auth", userRouter);
-
 
 connection()
   .then(
