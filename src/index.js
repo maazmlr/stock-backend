@@ -1,10 +1,26 @@
 import connection from "./db/index.js";
-import { app } from "./app.js";
 import dotenv from "dotenv";
-
+import express from "express";
+import cors from "cors";
 dotenv.config();
 
 const PORT = process.env.PORT || 8000;
+
+const app = express();
+
+app.use(cors());
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+//routes
+
+import userRouter from "./routes/user.routes.js";
+
+// routes declerationOrd
+
+app.use("/api/v1/auth", userRouter);
+
 
 connection()
   .then(
@@ -14,4 +30,4 @@ connection()
   )
   .catch((err) => console.log("connection failed", err));
 
-export default app
+export default app;
