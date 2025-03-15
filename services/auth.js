@@ -52,21 +52,26 @@ export const authService = {
         throw new ApiError(400, "Invalid credentials");
       }
 
-      console.log(payload);
-
       // Verify password
       const isMatch = await user.comparePassword(payload.password);
-
-      console.log(isMatch);
-
       if (!isMatch) {
         throw new ApiError(400, "Password not matched");
       }
 
+      // Check if the user's role is allowed
+      if (user.role !== "Admin" && user.role !== "Demo") {
+        throw new ApiError(
+          403,
+          "Access denied. Only Demo users can log in."
+        );
+      }
+
       // Create JWT token
-      const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRES_IN,
-      });
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+      );
 
       // Return user data without password
       const userData = user.toObject();
