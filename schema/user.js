@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -36,33 +37,46 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Demo", "Real", "Admin"], // Three user roles
+      enum: ["Demo", "Real", "Admin"], // User roles
       required: true,
-      default: "Demo", // Default role is Demo
+      default: "Demo",
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
+    accessToken: {
+      type: String,
+      default: null,
+    },
+    refreshToken: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-
   next();
 });
 
+// Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  console.log("Comparing passwords...");
-  console.log("Candidate Password:", candidatePassword);
-  console.log("Hashed Password:", this.password);
-
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Generate password reset token
 userSchema.methods.getResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
@@ -70,7 +84,8 @@ userSchema.methods.getResetPasswordToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+
+  this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // Token expires in 10 minutes
 
   return resetToken; // Send unhashed token to user
 };

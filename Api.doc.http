@@ -4,12 +4,12 @@ Content-Type: application/json
 
 {
   "name": "John Doe",
-  "email": "compiletimeterro@gmail.com",
+  "email": "maaz70724@gmail.com",
   "password": "SecurePassword12",
   "city": "New York",
   "country": "USA",
   "contactNo": "1234567890",
-  "role": "Real"
+  "role": "Demo"
 }
 
 ### Login User
@@ -28,15 +28,15 @@ POST http://localhost:8000/api/v1/auth/forgot-password
 Content-Type: application/json
 
 {
-  "email": "compiletimeterro@gmail.com"
+  "email": "maaz70724@gmail.com"
 }
 
 ### 2️⃣ Reset Password Request
-POST http://localhost:8000/api/v1/auth/reset-password/PASTE-TOKEN-HERE
+POST http://localhost:8000/api/v1/auth/reset-password/066086bc83db244425054320cf6ecd72ba1f1e61624a652457df85d40008763d
 Content-Type: application/json
 
 {
-  "newPassword": "newsecurepassword123"
+  "newPassword": "maaz@123"
 }
 
 ###

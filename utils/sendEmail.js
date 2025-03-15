@@ -1,19 +1,29 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+console.log(
+  process.env.EMAIL_PASS,
+  process.env.EMAIL_PORT,
+  process.env.EMAIL_USER,
+  process.env.EMAIl_HOST
+);
 const transporter = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: process.env.SMTP_PORT,
-  secure: false, // Use `true` for port 465, `false` for other ports
+  host: process.env.EMAIl_HOST,
+  port: process.env.EMAIL_PORT,
+  secure: true,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async ({ email: to, subject, message: text }) => {
+  console.log(to, "i amamam");
   try {
     const info = await transporter.sendMail({
-      from: `"Your App" <${process.env.SMTP_USER}>`,
+      from: `"Your App" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,

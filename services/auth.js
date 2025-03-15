@@ -60,10 +60,7 @@ export const authService = {
 
       // Check if the user's role is allowed
       if (user.role !== "Admin" && user.role !== "Demo") {
-        throw new ApiError(
-          403,
-          "Access denied. Only Demo users can log in."
-        );
+        throw new ApiError(403, "Access denied. Only Demo users can log in.");
       }
 
       // Create JWT token
@@ -82,28 +79,35 @@ export const authService = {
       throw new ApiError(400, error.message || "Login failed");
     }
   },
-
   async forgotPassword(email) {
-    const user = await User.findOne({ email });
+    try {
+      const user = await User.findOne({ email });
 
-    if (!user) {
-      throw new Error("User with this email does not exist");
+      if (!user) {
+        throw new ApiError(400, "User with this email does not exist");
+      }
+
+      // Generate password reset token
+      const resetToken = user.getResetPasswordToken();
+      await user.save();
+
+      // Send reset email
+      const message = `Use this token to reset your password: ${resetToken}. This token expires in 10 minutes.`;
+
+      await sendEmail({
+        email: user.email,
+        subject: "Password Reset",
+        message,
+      });
+
+      return { message: "Password reset token sent to email" };
+    } catch (error) {
+      throw new ApiError(400, "some thing went wrong");
     }
-
-    // Generate password reset token
-    const resetToken = user.getResetPasswordToken();
-    await user.save();
-
-    // Send reset email
-    const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
-    const message = `Click the link below to reset your password:\n\n${resetUrl}\n\nThis link expires in 10 minutes.`;
-
-    await sendEmail({ email: user.email, subject: "Password Reset", message });
-
-    return { message: "Password reset link sent to email" };
   },
 
   async resetPassword(token, newPassword) {
+    
     // Hash the received token to match the stored hash
     const resetPasswordToken = crypto
       .createHash("sha256")
