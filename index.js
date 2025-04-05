@@ -16,10 +16,12 @@ app.use(express.static("public"));
 //routes
 
 import userRouter from "./routes/user.routes.js";
+import stockDataRouter from "./routes/stock.data.routes.js"
 
 // routes declerationOrd
 
 app.use("/api/v1/auth", userRouter);
+app.use("/api/v1/stock-data",stockDataRouter)
 
 connection()
   .then(
