@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 dotenv.config();
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 2000;
 
 const app = express();
 
@@ -16,12 +16,13 @@ app.use(express.static("public"));
 //routes
 
 import userRouter from "./routes/user.routes.js";
-import stockDataRouter from "./routes/stock.data.routes.js"
-
+import stockDataRouter from "./routes/stock.data.routes.js";
+import demoAccountRouter from "./routes/demo.account.routes.js";
 // routes declerationOrd
 
 app.use("/api/v1/auth", userRouter);
-app.use("/api/v1/stock-data",stockDataRouter)
+app.use("/api/v1/stock-data", stockDataRouter);
+app.use("/api/v1/demo", demoAccountRouter);
 
 connection()
   .then(
