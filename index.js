@@ -18,11 +18,13 @@ app.use(express.static("public"));
 import userRouter from "./routes/user.routes.js";
 import stockDataRouter from "./routes/stock.data.routes.js";
 import demoAccountRouter from "./routes/demo.account.routes.js";
+import demoUserRouter from "./routes/demo.user.routes.js";
 // routes declerationOrd
 
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/stock-data", stockDataRouter);
 app.use("/api/v1/demo", demoAccountRouter);
+app.use("/api/v1/demo-user", demoUserRouter);
 
 connection()
   .then(

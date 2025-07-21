@@ -57,12 +57,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    funds: {
+      type: Number,
+      default: 0, // will be updated in pre-save
+    },
   },
   { timestamps: true }
 );
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
+  if (this.isNew && this.role === "Demo" && this.funds === 0) {
+    this.funds = 1_000_000;
+  }
   if (!this.isModified("password")) {
     return next();
   }
