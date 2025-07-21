@@ -24,6 +24,7 @@ app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/stock-data", stockDataRouter);
 app.use("/api/v1/demo", demoAccountRouter);
 
+app._router.stack.forEach((r) => r.route && console.log(r.route.path));
 connection()
   .then(
     app.listen(PORT, () => {

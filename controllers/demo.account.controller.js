@@ -12,7 +12,7 @@ const StockListing = asyncHandler(async (req, res) => {
     );
     return res.status(response.statusCode).json(response);
   } catch (error) {
-    const response = new ApiResponsone(
+    const response = new ApiResRponsone(
       400,
       null,
       error.message || "Something Went Wrong"
