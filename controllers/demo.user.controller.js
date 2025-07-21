@@ -5,7 +5,7 @@ const BuyStock = asyncHandler(async (req, res) => {
   const { symbol, quantity, price } = req.body;
 
   try {
-    const result = await DemoUser.buyStock("",symbol, quantity, price);
+    const result = await DemoUser.buyStock("", symbol, quantity, price);
     return res.status(200).json({
       success: true,
       message: "Stock purchased successfully",
@@ -20,9 +20,8 @@ const BuyStock = asyncHandler(async (req, res) => {
   }
 });
 
-
 const sellStock = asyncHandler(async (req, res) => {
- try {
+  try {
     const { symbol, quantity, price } = req.body;
     const userId = req.user.id; // Assuming user ID is available in req.user
 
@@ -32,20 +31,13 @@ const sellStock = asyncHandler(async (req, res) => {
       message: "Stock sold successfully",
       data: result,
     });
-
-
- } catch (error) {
+  } catch (error) {
     console.log("Error in SellStock:", error);
     return res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Internal Server Error",
     });
   }
- }
 });
 
-
-
-
-
-export { BuyStock };
+export { BuyStock, sellStock };
