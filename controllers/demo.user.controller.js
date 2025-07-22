@@ -44,9 +44,7 @@ const sellStock = asyncHandler(async (req, res) => {
   }
 });
 
-import { getUserHoldings } from "../services/holding.service.js";
-
-export async function getHoldingsController(req, res) {
+async function getHoldingsController(req, res) {
   try {
     const userId = req.user._id; // assumes user is set from auth middleware
 
@@ -65,4 +63,4 @@ export async function getHoldingsController(req, res) {
   }
 }
 
-export { BuyStock, sellStock ,getHoldingsController};
+export { BuyStock, sellStock, getHoldingsController };
