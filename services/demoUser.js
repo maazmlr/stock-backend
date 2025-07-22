@@ -120,4 +120,14 @@ export const DemoUser = {
 
     return { message: "Stock sold successfully" };
   },
+
+  async getUserHoldings(userId) {
+    if (!userId) {
+      throw new Error("User ID is required to fetch holdings");
+    }
+
+    const holdings = await Holding.find({ userId }).lean();
+
+    return holdings;
+  },
 };
