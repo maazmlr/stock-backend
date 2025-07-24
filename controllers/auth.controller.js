@@ -42,6 +42,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const response = new ApiResponsone(200, result, "User login successful");
     return res.status(response.statusCode).json(response);
   } catch (error) {
+    console.log("Login error:", error);
+
     const response = new ApiResponsone(
       400,
       null,

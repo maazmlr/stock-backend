@@ -15,7 +15,7 @@ export const DemoUser = {
       throw new ApiError(404, "Stock not found");
     }
 
-    const currentPrice = stock.price;
+    const currentPrice = stock.PRICE;
     if (currentPrice > price) {
       throw new ApiError(400, "Price is less than current stock price");
     }
@@ -24,6 +24,8 @@ export const DemoUser = {
 
     // 1. Check User has enough funds
     const user = await User.findById(userId);
+    console.log(user, "user");
+
     if (!user || user.role !== "Demo") {
       throw new ApiError(403, "Only demo users can buy stock");
     }
@@ -34,7 +36,7 @@ export const DemoUser = {
 
     // 2. Insert Transaction
     await Transaction.create({
-      user: userId,
+      userId: userId,
       symbol,
       quantity,
       price: currentPrice,
@@ -42,7 +44,7 @@ export const DemoUser = {
     });
 
     // 3. Update Holdings
-    const holding = await Holding.findOne({ user: userId, symbol });
+    const holding = await Holding.findOne({ userId, symbol });
 
     if (holding) {
       // Weighted average formula
@@ -56,7 +58,7 @@ export const DemoUser = {
       await holding.save();
     } else {
       await Holding.create({
-        user: userId,
+        userId,
         symbol,
         quantity,
         avgBuyPrice: currentPrice,
@@ -80,7 +82,7 @@ export const DemoUser = {
       throw new ApiError(404, "Stock not found");
     }
 
-    const currentPrice = stock.price;
+    const currentPrice = stock.PRICE;
     if (currentPrice < price) {
       throw new ApiError(400, "Price is higher than current stock price");
     }
@@ -91,14 +93,14 @@ export const DemoUser = {
       throw new ApiError(403, "Only demo users can sell stock");
     }
 
-    const holding = await Holding.findOne({ user: userId, symbol });
+    const holding = await Holding.findOne({ userId, symbol });
     if (!holding || holding.quantity < quantity) {
       throw new ApiError(400, "Not enough holdings to sell");
     }
 
     // 2. Insert Transaction
     await Transaction.create({
-      user: userId,
+      userId,
       symbol,
       quantity,
       price: currentPrice,
@@ -129,5 +131,37 @@ export const DemoUser = {
     const holdings = await Holding.find({ userId }).lean();
 
     return holdings;
+  },
+
+  async getUser(userId) {
+    if (!userId) {
+      throw new Error("User ID is required to fetch user");
+    }
+
+    const user = await User.findById(userId).lean();
+
+    return user;
+  },
+
+  async resetUserFunds(userId) {
+    if (!userId) {
+      throw new ApiError(400, "User ID is required to reset funds");
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (user.role !== "Demo") {
+      throw new ApiError(403, "Only demo users can reset funds");
+    }
+
+    // Update user funds to 1 million
+    user.funds = 1000000;
+    await user.save();
+
+    user;
   },
 };

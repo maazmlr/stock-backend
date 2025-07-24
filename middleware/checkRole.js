@@ -2,7 +2,7 @@
 const roles={
   Admin:"admin",
   Real:"real",
-  Demo:"demo"
+  Demo:"Demo"
 }
 const checkRole = (role) => {
   return (req, res, next) => {

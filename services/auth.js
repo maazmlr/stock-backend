@@ -6,8 +6,8 @@ import crypto from "crypto";
 import sendEmail from "../utils/sendEmail.js";
 
 // Config
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_here";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "30d"; // Default to 30 days if not set
 
 export const authService = {
   async signUp(payload) {
@@ -64,11 +64,9 @@ export const authService = {
       }
 
       // Create JWT token
-      const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN }
-      );
+      const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+        expiresIn: JWT_EXPIRES_IN,
+      });
 
       // Return user data without password
       const userData = user.toObject();
@@ -76,6 +74,7 @@ export const authService = {
 
       return { user: userData, token };
     } catch (error) {
+      console.error("Login error:", error);
       throw new ApiError(400, error.message || "Login failed");
     }
   },
@@ -107,7 +106,6 @@ export const authService = {
   },
 
   async resetPassword(token, newPassword) {
-    
     // Hash the received token to match the stored hash
     const resetPasswordToken = crypto
       .createHash("sha256")

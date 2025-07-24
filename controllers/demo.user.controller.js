@@ -9,7 +9,7 @@ const BuyStock = asyncHandler(async (req, res) => {
   const { symbol, quantity, price } = req.body;
 
   try {
-    const result = await DemoUser.buyStock(user._id, symbol, quantity, price);
+    const result = await DemoUser.buyStock(user.id, symbol, quantity, price);
     return res.status(200).json({
       success: true,
       message: "Stock purchased successfully",
@@ -46,7 +46,7 @@ const sellStock = asyncHandler(async (req, res) => {
 
 async function getHoldingsController(req, res) {
   try {
-    const userId = req.user._id; // assumes user is set from auth middleware
+    const userId = req.user.id; // assumes user is set from auth middleware
 
     const holdings = await DemoUser.getUserHoldings(userId);
 
@@ -63,4 +63,52 @@ async function getHoldingsController(req, res) {
   }
 }
 
-export { BuyStock, sellStock, getHoldingsController };
+export const getUserController = async (req, res) => {
+  try {
+    const userId = req.user.id; // assumes user is set from auth middleware
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await DemoUser.getUser(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in getUserController:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const resetUserFundsController = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user.id; // assumes user is set from auth middleware
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    const result = await DemoUser.resetUserFunds(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "User funds reset successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error in resetUserFundsController:", error);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+});
+
+export { BuyStock, sellStock, getHoldingsController, resetUserFundsController };
